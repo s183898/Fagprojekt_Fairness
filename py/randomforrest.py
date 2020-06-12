@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri May  8 15:00:01 2020
+
+@author: Værksted Matilde
+"""
+
+from sklearn.ensemble import RandomForestClassifier
+from POST import *
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+#from Equal_opportunity import equal_opportunity 
+#from conf_and_rates import plot_conf
+import numpy as np
+import pickle
+#from Permutation_test import load_classifier
+
+np.random.seed(217)
+#%% Functions
+
+def load_classifier(name):
+
+    if name == "NN":
+
+        model = load_model("./NN_model.h5")
+
+    elif name == "RF":
+        model = pickle.load(open("./RF.sav", 'rb'))
+        
+    else:
+        print("Wrong model name")
+
+    return model
+
+def train_test_RF(X_train, y_train, X_test, y_test, train = True): 
+    
+# Fit on training data
+    if train == True: 
+        model = RandomForestClassifier(n_estimators=100,
+                               criterion = 'entropy',
+                               min_samples_split=2,
+                               bootstrap = True,
+                               max_features = None)
+        
+        model.fit(X_train, y_train)
+    
+    else: 
+        model = load_classifier("RF")
+    
+    #predict test and training 
+    rf_predictions_train = model.predict(X_train)
+    rf_predictions = model.predict(X_test)
+    
+    # Probabilities for score = 1, test
+    yhat_rf = model.predict_proba(X_test)[:, 1]
+    yhat_rf = pd.DataFrame(yhat_rf)
+    
+    #Training and test accurracy
+    train_acc = np.sum(rf_predictions_train ==y_train)/len(y_train)
+    test_acc = np.sum(rf_predictions ==y_test)/len(y_test)
+    
+    return train_acc, test_acc, yhat_rf, model
+    
+#%%
+#Uncomment to train model 
+    
+
+# Define random forrest model
+
+
+
+
+
+#Import variables from other scripts
+#from Process_data import A, ytrue, yhat
+#from Process_data import y_train, y_test, X_train, X_test, train_index, test_index
+
+#train and test model
+#train_acc, test_acc, yhat_rf, model = train_test_RF(X_train, y_train, X_test, y_test)
+          
+
+
+#save model
+#filename = 'RF.sav'
+#pickle.dump(model, open(filename, 'wb'))
+
+
+
+
