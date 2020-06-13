@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 #from POST import *
 
+#sigma, T, CLVar= sigma, T, Equal_rf
 def equal_opportunity(sigma, T, CLVar, plot = False):
     """
     Equal_opportunity computes conf matrx, acc, (TPR, FPR) before and after the equal opportunity step is aplied
@@ -40,16 +41,16 @@ def equal_opportunity(sigma, T, CLVar, plot = False):
     T_C = np.asarray(T)
     
     #remove i's from TPR of both races, and remove coherent thresholds
-    for i in range(2):
+    #for i in range(2):
         
-        idxa = TPR_A != i
-        idxc = TPR_C != i
+    #    idxa = TPR_A != i
+    #    idxc = TPR_C != i
         
-        TPR_A = TPR_A[idxa]
-        TPR_C = TPR_C[idxc]
-    
-        T_A = T_A[idxa]
-        T_C = T_C[idxc]
+    #    TPR_A = TPR_A[idxa]
+    #    TPR_C = TPR_C[idxc]
+   # 
+   #     T_A = T_A[idxa]
+   #     T_C = T_C[idxc]
     
     TtotalC = []
     TtotalA = []
@@ -78,8 +79,8 @@ def equal_opportunity(sigma, T, CLVar, plot = False):
     accA, accC = [], []
     for a,c in zip(TtotalA, TtotalC):
         
-        confa = CLVar.conf_models(a,0) #conf mtrx with threshold i, for african-american
-        confc = CLVar.conf_models(c,1) #conf mtrx with threshold i for caucasian
+        confa = CLVar.conf_models(a,0) #conf mtrx with threshold a, for african-american
+        confc = CLVar.conf_models(c,1) #conf mtrx with threshold c for caucasian
         
         pairsA.append(CLVar.FP_TP_rate(confa)) #collect (FPR, TPR) with threshold i, for african-american
         pairsC.append(CLVar.FP_TP_rate(confc))  #collect (FPR, TPR) with threshold i for caucasian
@@ -126,10 +127,11 @@ def equal_opportunity(sigma, T, CLVar, plot = False):
         #plot with max accu point
         plt.plot(FPR_C, TPR_C1,'g', label = 'Caucasian')
         plt.plot(FPR_A, TPR_A1,'b', label = 'African-american')
-        plt.plot(rate[0][0],rate[0][1] ,'b*', label = "Equal opportunity")
-        plt.plot(rate[1][0],rate[1][1], 'g*', label = "Equal opportunity")
+        plt.plot(rate[0][0],rate[0][1] ,'b*', label = "Rates with optimal threshold")
+        plt.plot(rate[1][0],rate[1][1], 'g*', label = "Rates with optimal threshold")
         plt.plot([rate[0][0],rate[1][0]],[rate[0][1],rate[1][1]] ,'r')
         plt.legend()
+        plt.title("Equal opportunity")
         plt.show() 
     
  

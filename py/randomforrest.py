@@ -10,6 +10,7 @@ from POST import *
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from tensorflow.keras.models import load_model
 #from Equal_opportunity import equal_opportunity 
 #from conf_and_rates import plot_conf
 import numpy as np
@@ -19,14 +20,21 @@ import pickle
 np.random.seed(217)
 #%% Functions
 
-def load_classifier(name):
+def load_classifier_1(name, X_train, y_train):
 
     if name == "NN":
 
         model = load_model("./NN_model.h5")
 
     elif name == "RF":
-        model = pickle.load(open("./RF.sav", 'rb'))
+        model = RandomForestClassifier(n_estimators=64,
+                               criterion = 'entropy',
+                               min_samples_split=2,
+                               bootstrap = True,
+                               max_features = None)
+        
+        model.fit(X_train, y_train)
+    
         
     else:
         print("Wrong model name")
@@ -37,28 +45,27 @@ def train_test_RF(X_train, y_train, X_test, y_test, train = True):
     
 # Fit on training data
     if train == True: 
-        model = RandomForestClassifier(n_estimators=100,
+        model = RandomForestClassifier(n_estimators=64,
+                                       max_depth = 15,
                                criterion = 'entropy',
-                               min_samples_split=2,
+                               min_samples_split=5,
+                               min_samples_leaf = 5,
                                bootstrap = True,
-                               max_features = None)
+                               max_features = 4)
         
         model.fit(X_train, y_train)
     
     else: 
-        model = load_classifier("RF")
+        model = load_classifier_1("RF", X_train, y_train)
     
-    #predict test and training 
-    rf_predictions_train = model.predict(X_train)
-    rf_predictions = model.predict(X_test)
-    
+   
     # Probabilities for score = 1, test
     yhat_rf = model.predict_proba(X_test)[:, 1]
     yhat_rf = pd.DataFrame(yhat_rf)
     
     #Training and test accurracy
-    train_acc = np.sum(rf_predictions_train ==y_train)/len(y_train)
-    test_acc = np.sum(rf_predictions ==y_test)/len(y_test)
+    train_acc = model.score(X_train, y_train)
+    test_acc =  model.score(X_test, y_test)
     
     return train_acc, test_acc, yhat_rf, model
     

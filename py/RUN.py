@@ -16,7 +16,7 @@ import numpy as np
 from randomforrest import train_test_RF
 from tensorflow.keras.models import load_model
 import pickle
-from Permutation_test import load_classifier
+from randomforrest import load_classifier_1
 
 from Equalised_odds import equal_odds, estimate, percentile
 
@@ -36,8 +36,8 @@ sigma = 0.001
 
 
 #%% Random forrest
-model_rf = load_classifier("RF")
-train_acc, test_acc, yhat_rf = train_test_RF(model_rf, X_train, y_train, X_test, y_test, train = False)
+#model_rf = load_classifier_1("RF", X_train, y_train)
+train_acc, test_acc, yhat_rf, model_rf = train_test_RF(X_train, y_train, X_test, y_test, train = True)
 print("Training accuracy, RF: %s" %train_acc)
 print("Test accuracy, RF:     %s" %test_acc)
 
@@ -62,7 +62,7 @@ w_acc_odd = (ACC[0]*n_A + ACC[1]*n_C)/(n_A+n_C)
 w_acc_opp = (acc_after[0]*n_A + acc_after[1]*n_C)/(n_A+n_C)
 
 #%% NN
-model_nn = load_classifier("NN")
+model_nn = load_classifier_1("NN",X_train, y_train)
 y_nn = model_nn.predict(X_test)
 loss_nn_test, acc_nn_test = model_nn.evaluate(X_test, y_test, verbose = 0)
 loss_nn_train, acc_nn_train = model_nn.evaluate(X_train, y_train, verbose = 0)
@@ -88,8 +88,9 @@ max_acc_nn, t_odds_nn, FPR_TPR_opp_nn,conf_before_nn, conf_opp_nn, acc_before_nn
 w_acc_odd_nn = (accNN[0]*n_A + accNN[1]*n_C)/(n_A+n_C)
 w_acc_opp_nn = (acc_opp_nn[0]*n_A + acc_opp_nn[1]*n_C)/(n_A+n_C)
 #%% Print results
-title = ["RF, Before, A", "RF, Before, C", "RF, odds, A", "RF, odds, C", "RF, opp, A","RF, opp, C",
+title = ["RF classifier (African-American)", "RF, Before, C", "RF, odds, A", "RF, odds, C", "RF, opp, A","RF, opp, C",
          "NN, Before, A", "NN, Before, C", "NN, odds, A", "NN, odds, C", "NN, opp, A","NN, opp, C"]
+
 print("RANDOM FORREST")
 print("                 ")
 print("BEFORE CORRECTING FOR BIAS")
@@ -257,3 +258,17 @@ plt.show()
 plot_conf(conf_opp_nn[1], title[11])
 plt.show()
 
+
+
+##thresholds 
+##TPR and FPR i tabel 
+##Resten af raterne i en anden tabel 
+#tabel med accuracies vægtet og ikke vægtet. husk at lave vægtet for uncorrected
+
+
+
+##husk at lave oveskrifter til alle 
+#conf mtrx for samlet predictions across races
+#model accuracies
+
+#p-values 
