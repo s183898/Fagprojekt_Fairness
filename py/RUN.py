@@ -16,7 +16,7 @@ import numpy as np
 from randomforrest import train_test_RF
 from tensorflow.keras.models import load_model
 import pickle
-from randomforrest import load_classifier_1
+#from randomforrest import load_classifier_1
 
 from Equalised_odds import equal_odds, estimate, percentile
 
@@ -37,7 +37,7 @@ sigma = 0.001
 
 #%% Random forrest
 #model_rf = load_classifier_1("RF", X_train, y_train)
-train_acc, test_acc, yhat_rf, model_rf = train_test_RF(X_train, y_train, X_test, y_test, train = True)
+train_acc, test_acc, yhat_rf, model_rf = train_test_RF(X_train, y_train, X_test, y_test)
 print("Training accuracy, RF: %s" %train_acc)
 print("Test accuracy, RF:     %s" %test_acc)
 print(model_rf.oob_score_)
