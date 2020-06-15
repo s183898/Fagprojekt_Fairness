@@ -54,7 +54,6 @@ def equal_opportunity(sigma, T, CLVar, plot = False):
     
     TtotalC = []
     TtotalA = []
-    T_Anew, T_Cnew = [], []
     for t_idx, A in enumerate(TPR_A): 
         
         #Create list with all entries = A and the same length as TPR_C
@@ -71,8 +70,7 @@ def equal_opportunity(sigma, T, CLVar, plot = False):
             for i in range(len(t)):
                 TtotalC.append(t[i])
                 TtotalA.append(T_A[t_idx])
-                T_Anew.append(T_A[t_idx])
-                T_Cnew.append(T_C[t_idx])
+
             
     #compute (TPR, FPR) and accuracy 
     pairsA, pairsC = [], []
@@ -101,7 +99,7 @@ def equal_opportunity(sigma, T, CLVar, plot = False):
     #maximum accuracy of pairs
     maxw = np.argmax(weighted_acc)
     max_acc = weighted_acc[maxw]
-    maxt = [T_Anew[maxw], T_Cnew[maxw]]
+    maxt = [TtotalA[maxw], TtotalC[maxw]]
     rate = [pairsA[maxw], pairsC[maxw]]
     
     #Conf mtrx before 

@@ -42,13 +42,9 @@ def train_test_RF(X_train, y_train, X_test, y_test):
     
 # Fit on training data
     model = RandomForestClassifier(n_estimators=64,
-                                   #max_depth = 15,
                            criterion = 'entropy',
-                           #min_samples_split=50,
-                           #min_samples_leaf = 30,
                            bootstrap = True,
-                           max_features = 5, 
-                           oob_score = True, 
+                           max_features = 5,
                            ccp_alpha =0.0029)
     
     model.fit(X_train, y_train)
@@ -113,6 +109,7 @@ def CV_RF():
     return rf_random
 
 #Run CV 
+"""
 rf_random = CV_RF()
 
 #Access best parameters, best test-score (mean across cv folds) and best model
@@ -168,4 +165,4 @@ print('Mean test accu: %s' %best_score)
 print('Mean train accu: %s' %np.mean(optimal_train))
 print(best_param )
 
-
+"""
