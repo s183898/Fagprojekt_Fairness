@@ -6,9 +6,11 @@ from tensorflow.keras.models import load_model
 import pickle
 from sklearn.ensemble import RandomForestClassifier
 from scipy import stats
+import random
 
 
-np.random.seed(217)
+
+#np.random.seed(217)
 def load_classifier(name):
 
     if name == "NN":
@@ -30,45 +32,36 @@ def load_classifier(name):
     return model
 
 def permutation(n_perm, name, plots = False):
-    model = load_classifier(name)
-
-    X_perm = X_test
+    # load model and pick attributes to permutate
+    model = load_classifier(name)    
     n_attr = X_test.shape[1]
 
+    # Initalise empty matrix for accuracies
     accs = np.zeros([n_perm,n_attr])
-    losses = np.zeros([n_perm,n_attr])
 
     for idx in range(n_attr):
         for trial in range(n_perm):
-            X_perm = X_test
+            # Define a new dataframe independent of X_test and permutate
+            X_perm = np.array(X_test)
             X_perm[:,idx] = resample(X_perm[:,idx] ,replace = False)
-            if name == "NN":
+            # Select model and calculate accuracies under permutations
+            if name == "NN":    
                 perm_loss, perm_accuracy = model.evaluate(X_perm, y_test, verbose = 0)
             elif name == "RF":
                 perm_accuracy = model.score(X_perm,y_test)
             else:
                 print("Wrong name")
                 return
-
+            # Append model accuracy under permutation
             accs[trial,idx] = perm_accuracy 
-            #losses[trial,idx] = perm_loss
-                     
-    #loss_mean = np.mean(losses,axis=0) 
-    accs_mean = np.mean(accs, axis = 0)
 
-    #error_loss = np.std(losses, axis = 0)/np.sqrt(n_perm)
-    error_accs = np.std(accs, axis = 0 )/np.sqrt(n_perm)
-
-    y_pos = np.arange(n_attr)
-
-#    plt.subplot(211)
-
-#    plt.barh(y_pos, loss_mean, xerr = error_loss)
-#    plt.title("Loss")
-#    plt.yticks(y_pos,labels)
-
-#    plt.subplot(212)
     if plots == True:
+        # Plot mean of accuracy for each attribute
+        accs_mean = np.mean(accs, axis = 0)
+        # Errors deminish when the number of permutations are 1000, so these are ignored
+        error_accs = np.std(accs, axis = 0 )/np.sqrt(n_perm)
+        
+        y_pos = np.arange(n_attr)
         plt.barh(y_pos,accs_mean)
         plt.title(name + " - " + "Accuracy")
         plt.yticks(y_pos,labels)
@@ -78,23 +71,60 @@ def permutation(n_perm, name, plots = False):
 
 def permutation_test(n_perm, name):
 
+    # Access accuracy of permutations with a specifik model 
     accs = permutation(n_perm, name)
-    
     p_values = []
 
     for idx in range(accs.shape[1]):
+        # Calculate p-value from t-test for each feature based on permutations
         p = stats.ttest_1samp(accs[:,idx],0.81)[1]
         p_values.append(p)
 
     return p_values
 
+def direction(n_perm, name, plots = False):
+    model = load_classifier(name)
+    # Index of first binary feature
+    binary = 6
 
-#print(permutation(1,"NN"))
+    #X_perm = X_binary
+    n_attr = (X_test.shape[1]-binary)
 
-p_values = permutation_test(2, "RF")
+    decile = np.zeros([n_perm,n_attr])
 
-#np.save("p_values_29", p_values)
+    for idx in range(n_attr):
+        i = idx + binary
+        for trial in range(n_perm):
+            # Define a new dataframe independent of X_test and permutate
+            X_perm = np.array(X_test)
+            X_perm[:,i:] = resample(X_perm[:,i:], replace = False)
+  
+            if name == "NN":
+                # Predict based on permutations
+                pred_perm = model.predict(X_perm, verbose = 0)
+                # Grab values where features are 1 / True
+                bin_1 = X_test[:,i] == True
+                # Save mean of predictions
+                mean_score = sum(pred_perm[bin_1])/len(bin_1)
+                decile[trial,idx] = mean_score
 
+            elif name == "RF":
+                perm_accuracy = model.score(X_perm,y_test)
+            else:
+                print("Wrong name")
+                return
 
+    if plots == True:
 
+        mean_decile = np.mean(decile,axis = 0)
+        print(mean_decile.shape)
 
+        y_pos = np.arange(n_attr)
+        plt.barh(y_pos,mean_decile)
+        plt.title(name + " - " + "Influence")
+        plt.yticks(y_pos,labels[binary:])
+        plt.show()
+
+    return decile
+
+print(direction(10,"NN",plots = True))
