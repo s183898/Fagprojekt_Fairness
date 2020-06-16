@@ -7,6 +7,8 @@ Created on Wed Jun 10 10:45:39 2020
 
 from Process_data import *
 from POST import *
+from Process_data import A, ytrue, yhat
+from Equal_opportunity import *
        
 DATA = equal(A, yhat, ytrue, N=600)
 #allthresholds, allfpr, alltpr, allauc, thresholds = DATA.ROC(False, True)
@@ -19,9 +21,8 @@ conf = DATA.calc_ConfusionMatrix(t1, t2, g, p1)
 
 t = 5
 ##Kode fra https://www.daniweb.com/programming/computer-science/tutorials/520084/understanding-roc-curves-from-scratch
-
-
-TP1, FP1 = DATA.ROC_([0,1,2,3,4,5,6,7,8,9,10], models = False)
+T = [0,1,2,3,4,5,6,7,8,9,10]
+TP1, FP1 = DATA.ROC_(T, models = False)
 
 Ax = TP1['African-American']
 Ay = FP1['African-American']
@@ -54,7 +55,9 @@ def percentile(p1,p2,p3):
     l1 = np.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2)
     l2 = np.sqrt((p1[0]-p3[0])**2+(p1[1]-p3[1])**2)
     return l1/(l2+0.000000001)
-"""
+
+
+
 l1 = line([Cx[4],Cx[4]],[Cx[3],Cy[3]])
 l2 = line([0,0],[Ax[5],Ay[5]])
 
@@ -82,4 +85,6 @@ c2 = DATA.calc_ConfusionMatrix(10,5, 0, perc2)
 DATA.FP_TP_rate(c1)
 DATA.FP_TP_rate(c2)
 plt.show()
-"""
+
+#equalised odds
+max_acc_raw, maxt_raw, rate_raw ,conf_before_raw, conf_after_raw, acc_before_raw, acc_after_raw, rate_before_raw = equal_opportunity(0.1, T, DATA, plot = True)
