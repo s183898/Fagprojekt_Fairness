@@ -82,14 +82,11 @@ def permutation_test(n_perm, name):
 
     return p_values
 
-def direction(n_perm, name, plots = False):
+def direction(n_perm, name, full = True, plots = False):
     model = load_classifier(name)
     # Index of first binary feature
     binary = 6
-
-    #X_perm = X_binary
     n_attr = (X_test.shape[1]-binary)
-
     decile = np.zeros([n_perm,n_attr])
 
     for idx in range(n_attr):
@@ -97,27 +94,22 @@ def direction(n_perm, name, plots = False):
         for trial in range(n_perm):
             # Define a new dataframe independent of X_test and permutate
             X_perm = np.array(X_test)
-            X_perm[:,i:] = resample(X_perm[:,i:], replace = False)
-  
-            if name == "NN":
-                # Predict based on permutations
-                pred_perm = model.predict(X_perm, verbose = 0)
-                # Grab values where features are 1 / True
-                bin_1 = X_test[:,i] == True
-                # Save mean of predictions
-                mean_score = sum(pred_perm[bin_1])/len(bin_1)
-                decile[trial,idx] = mean_score
-
-            elif name == "RF":
-                perm_accuracy = model.score(X_perm,y_test)
+            if full:
+                X_perm = resample(X_perm)
             else:
-                print("Wrong name")
-                return
+                X_perm[:,i] = resample(X_perm[:,i], replace = False)
+            # Grab values where features are 1 / True
+            bin_1 = X_perm[:,i] == True
+            print(bin_1)
+            # Predict based on permutations
+            pred_perm = model.predict_proba(X_perm)[:,0]
+            print(pred_perm)
+            # Save mean of predictions
+            mean_score = sum(pred_perm[bin_1])/sum(bin_1)
+            decile[trial,idx] = mean_score
 
     if plots == True:
-
         mean_decile = np.mean(decile,axis = 0)
-        print(mean_decile.shape)
 
         y_pos = np.arange(n_attr)
         plt.barh(y_pos,mean_decile)
@@ -127,4 +119,12 @@ def direction(n_perm, name, plots = False):
 
     return decile
 
-print(direction(10,"NN",plots = True))
+#print(direction(1,"RF", plots = True))
+#print(direction(5,"NN", plots = True))
+
+for i, lab in enumerate(labels):
+    print(sum(X_train[:,i]))
+    print(sum(X_test[:,i]))
+    print(lab)
+    print(i)
+
