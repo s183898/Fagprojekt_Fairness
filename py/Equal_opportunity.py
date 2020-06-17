@@ -42,15 +42,7 @@ def equal_opportunity(sigma, T, CLVar, plot = False):
     
     #remove i's from TPR of both races, and remove coherent thresholds
     #for i in range(2):
-        
-    #    idxa = TPR_A != i
-    #    idxc = TPR_C != i
-        
-    #    TPR_A = TPR_A[idxa]
-    #    TPR_C = TPR_C[idxc]
-   # 
-   #     T_A = T_A[idxa]
-   #     T_C = T_C[idxc]
+
     
     TtotalC = []
     TtotalA = []
@@ -63,7 +55,7 @@ def equal_opportunity(sigma, T, CLVar, plot = False):
         #Find difference between A and all TPR of C
         Diff = np.asarray(A) - np.asarray(TPR_C)
         
-        #Define idx of TPR_C that are identical to A and store them in list 
+        #Define idx of TPR_C that are identical to A and store relevant thresholds in list
         idx = abs(Diff) < sigma
         if sum(idx) > 0:    
             t = T_C[idx]
