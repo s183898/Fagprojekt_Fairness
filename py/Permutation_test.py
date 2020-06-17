@@ -82,7 +82,7 @@ def permutation_test(n_perm, name):
 
     return p_values
 
-def direction(n_perm, name, full = True, plots = False):
+def direction(n_perm, name, full = False, plots = False):
     model = load_classifier(name)
     # Index of first binary feature
     binary = 6
@@ -122,9 +122,4 @@ def direction(n_perm, name, full = True, plots = False):
 #print(direction(1,"RF", plots = True))
 #print(direction(5,"NN", plots = True))
 
-for i, lab in enumerate(labels):
-    print(sum(X_train[:,i]))
-    print(sum(X_test[:,i]))
-    print(lab)
-    print(i)
 
