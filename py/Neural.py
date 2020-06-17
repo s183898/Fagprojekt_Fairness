@@ -33,32 +33,32 @@ y_train = y[0:upper]
 y_test = y[upper:]
 """
 
-model = load_model("./NN_model.h5")
+#model = load_model("./NN_model.h5")
 
-def train_NN(n_epoch):
+def train_NN():
        model = Sequential()
        model.add(Dense(29, activation='relu'))
        model.add(Dense(32, activation='relu'))
-       model.add(Dropout(0.2))
+       model.add(Dropout(0.3))
        model.add(Dense(16, activation='relu'))
        model.add(Dense(1, activation='sigmoid'))
 
        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-       model.fit(X_train, y_train, epochs=n_epoch, batch_size=10)
+       model.fit(X_train, y_train, epochs=150, batch_size=64)
 
-       model.save("C:/Users/rasmu/OneDrive/Dokumenter/4. semester/Fagprojekt/02466---Project-in-Artificial-Intelligence-and-Data-Science/py/NN_model.h5")
+       model.save("NN_model_with_BO_finished_01.h5")
        
        return model
 
-#model = train_NN(150)
+model = train_NN()
 
 _, accuracy = model.evaluate(X_test, y_test)
 
 print('Accuracy: %.2f' % (accuracy*100))
 
 
-"""
+
 def ROC_NN(A):
 
        A = A.values[test_index]
@@ -135,7 +135,7 @@ plt.plot(FPR['African-American'], TPR['African-American'], label = 'african-amer
 plt.legend()
 plt.show()
 
-"""
+
 """
 
 labels = twoyears.data.drop(["decile_score.1"],axis =1)

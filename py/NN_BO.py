@@ -18,6 +18,20 @@ import matplotlib.pyplot as plt
 
 np.random.seed(217)
 
+train_idx = int(np.floor(X_train.shape[0]*0.8))
+
+X_train2 = np.array(X_train[:train_idx,:])
+X_test2 = np.array(X_train[train_idx:,:])
+
+y_train2 = np.array(y_train[:train_idx])
+y_test2 = np.array(y_train[train_idx:])
+
+print(X_train2.shape)
+print(X_test2.shape)
+print(y_train2.shape)
+print(y_test2.shape)
+
+
 # Build neural network classifier with exchangable hyper-parameters
 
 def train_NN(x):
@@ -33,9 +47,9 @@ def train_NN(x):
 
     model.compile(loss='binary_crossentropy', optimizer=optimizer_dict[parameters[5]], metrics=['accuracy'])
 
-    model.fit(X_train, y_train, epochs=int(parameters[1]),  batch_size= int(parameters[4]))
+    model.fit(X_train2, y_train2, epochs= int(parameters[1]),  batch_size= int(parameters[4]))
 
-    loss, accuracy = model.evaluate(X_test,y_test)
+    loss, accuracy = model.evaluate(X_test2,y_test2)
 
     return -accuracy
 
@@ -43,10 +57,10 @@ def train_NN(x):
 # define constraints for hyper-parameters
 
 # dropout rate
-dropout = np.arange(0,0.5, 0.05)
+dropout = np.arange(0,0.4, 0.05)
 
 # number of epochs 
-n_epochs = np.arange(50,200,50)
+n_epochs = np.arange(100,200,50)
 
 # Hidden neurons and batch size
 hidden_1 = [2**x for x in range(3,7)]
@@ -66,10 +80,13 @@ domain = [  {'name': 'dropout', 'type': 'discrete', 'domain': dropout},
 
 
 # run optimisation 
+
 opt = GPyOpt.methods.BayesianOptimization(f = train_NN,  
                                               domain = domain,        
                                               acquisition_type = 'EI' ,
                                              )
+
+
 
 opt.run_optimization(max_iter=15)
 
@@ -82,4 +99,6 @@ print(f"Best accuracy was obtained at {opt.fx_opt*-1} %")
 print("The best parameters obtained:")
 print("dropout rate = " + str(x_best[0]) + ", number of epochs = " + str(x_best[1]) + ", neruons in layer 1 = " + str(x_best[2]) + ", neurons in layer 2 =" + str(x_best[3]) + ", batch size = " + str(x_best[4]) + ", optimizer = " + str(optimizer_dict[x_best[5]]))
 
-np.save("C:/Users/rasmu/OneDrive/Dokumenter/4. semester/Fagprojekt/02466---Project-in-Artificial-Intelligence-and-Data-Science/py/NN_BO_1.h5", x_best)
+
+np.save("NN_BO_2.h5", x_best)
+
