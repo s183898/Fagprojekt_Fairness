@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from Equal_opportunity import equal_opportunity 
-from conf_and_rates import plot_conf
+from conf_and_rates import plot_conf, rates
 import numpy as np
 from randomforrest import train_test_RF
 from tensorflow.keras.models import load_model
@@ -24,6 +24,8 @@ from Equalised_odds import equal_odds, estimate, percentile
 from Process_data import A, ytrue, yhat
 from Process_data import y_train, y_test, X_train, X_test, train_index, test_index
 
+
+np.random.seed(217)
 #Prepair A anf ytrue for models
 A = A.values[test_index]
 A = pd.DataFrame(A)
@@ -61,8 +63,24 @@ n_C = Equal_rf.Freq[1]
 #weighted relative acc
 w_acc_odd = (ACC[0]*n_A + ACC[1]*n_C)/(n_A+n_C)
 w_acc_opp = (acc_after[0]*n_A + acc_after[1]*n_C)/(n_A+n_C)
+w_acc_before = (acc_before[0]*n_A + acc_before[1]*n_C)/(n_A+n_C)
+
+##Rates 
+#PPV, TDR, FOR, FNR, FDR, FPR, NPV, TNR
+Rates_rf_before_A = rates(conf_before[0])
+Rates_rf_odds_A = rates(conf_odds[0])
+Rates_rf_opp_A = rates(conf_after[0])
+Rates_rf_before_C = rates(conf_before[1])
+Rates_rf_odds_C = rates(conf_odds[1])
+Rates_rf_opp_C = rates(conf_after[1])
+
+def out(rate):     
+    print("& %s & %s & %s & %s & %s & %s & %s & %s" %(rate[0], rate[1], rate[2], rate[3], rate[4], rate[5], rate[6], rate[7]))
+    
+out(Rates_rf_before_C)
 
 #%% NN
+"""
 model_nn = load_classifier_1("NN",X_train, y_train)
 y_nn = model_nn.predict(X_test)
 loss_nn_test, acc_nn_test = model_nn.evaluate(X_test, y_test, verbose = 0)
@@ -88,9 +106,12 @@ max_acc_nn, t_odds_nn, FPR_TPR_opp_nn,conf_before_nn, conf_opp_nn, acc_before_nn
 #weighted relative acc
 w_acc_odd_nn = (accNN[0]*n_A + accNN[1]*n_C)/(n_A+n_C)
 w_acc_opp_nn = (acc_opp_nn[0]*n_A + acc_opp_nn[1]*n_C)/(n_A+n_C)
+
+"""
 #%% Print results
-title = ["RF classifier (African-American)", "RF, Before, C", "RF, odds, A", "RF, odds, C", "RF, opp, A","RF, opp, C",
-         "NN, Before, A", "NN, Before, C", "NN, odds, A", "NN, odds, C", "NN, opp, A","NN, opp, C"]
+
+title = ["RF classifier (African-American)", "RF classifier (Caucasian)", "RF classifier (African-American)", "RF classifier (Caucasian)", "RF classifier (African-American)","RF classifier (Caucasian)",
+         "NN, classifier (African-American)", "NN classifier (Caucasian)", "NN, classifier (African-American)", "NN classifier (Caucasian)", "NN, classifier (African-American)","NN classifier (Caucasian)"]
 
 print("RANDOM FORREST")
 print("                 ")
@@ -99,6 +120,7 @@ print("                 ")
 print("Accuracy:")
 print("African-American: %s" %acc_before[0])
 print("Caucasian: %s" %acc_before[1])
+print("weighted: %s" %w_acc_before)
 print("                 ")
 print("                 ")
 print("FPR and TPR:")
@@ -146,6 +168,7 @@ plot_conf(conf_odds[0], title[2])
 plt.show()
 plot_conf(conf_odds[1], title[3])
 plt.show()
+
 #equal opportunity
 print("EQUAL OPPORTUNITY CLASSIFIER")
 print("                 ")
@@ -174,7 +197,7 @@ plot_conf(conf_after[1], title[5])
 
 
 
-
+"""
 ######################################################
 print("NEURAL NETWORK")
 print("                 ")
@@ -259,7 +282,7 @@ plt.show()
 plot_conf(conf_opp_nn[1], title[11])
 plt.show()
 
-
+"""
 
 ##thresholds 
 ##TPR and FPR i tabel 
