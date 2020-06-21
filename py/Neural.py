@@ -33,7 +33,7 @@ y_train = y[0:upper]
 y_test = y[upper:]
 """
 
-#model = load_model("./NN_model.h5")
+model = load_model("NN_model_with_BO_finished.h5")
 
 def train_NN():
        model = Sequential()
@@ -51,13 +51,15 @@ def train_NN():
        
        return model
 
-model = train_NN()
+# model = train_NN()
 
 _, accuracy = model.evaluate(X_test, y_test)
 
 print('Accuracy: %.2f' % (accuracy*100))
 
+#print(model.predict_proba(X_test))
 
+"""
 
 def ROC_NN(A):
 
@@ -135,7 +137,7 @@ plt.plot(FPR['African-American'], TPR['African-American'], label = 'african-amer
 plt.legend()
 plt.show()
 
-
+"""
 """
 
 labels = twoyears.data.drop(["decile_score.1"],axis =1)
