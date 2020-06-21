@@ -30,7 +30,7 @@ def load_classifier_1(name, X_train, y_train):
 
     if name == "NN":
 
-        model = load_model("./NN_model.h5")
+        model = load_model("./NN_model_with_BO_finished.h5")
 
     elif name == "RF":
         model = RandomForestClassifier(n_estimators=65,

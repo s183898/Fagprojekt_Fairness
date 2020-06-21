@@ -117,8 +117,8 @@ def equal_opportunity(sigma, T, CLVar, plot = False):
         #plot with max accu point
         plt.plot(FPR_C, TPR_C1,'g', label = 'Caucasian')
         plt.plot(FPR_A, TPR_A1,'b', label = 'African-american')
-        plt.plot(rate[0][0],rate[0][1] ,'b*', label = "Rates with optimal threshold")
-        plt.plot(rate[1][0],rate[1][1], 'g*', label = "Rates with optimal threshold")
+        plt.plot(rate[0][0],rate[0][1] ,'bo', label = "Rates with optimal threshold")
+        plt.plot(rate[1][0],rate[1][1], 'go', label = "Rates with optimal threshold")
         plt.plot([rate[0][0],rate[1][0]],[rate[0][1],rate[1][1]] ,'r')
         plt.legend()
         plt.title("Equal opportunity")

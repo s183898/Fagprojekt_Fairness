@@ -111,9 +111,9 @@ def equal_odds(T, CLVar, group, p0, plot = False):
         #plot with max accu point
         plt.plot(Fpr_rf['Caucasian'], Tpr_rf['Caucasian'],'g', label = 'Caucasian')
         plt.plot(Fpr_rf['African-American'], Tpr_rf['African-American'],'b', label = 'African-american')
-        plt.plot(maxp[0], maxp[1], 'b*', label = "Rates with optimal threshold")
-        plt.plot(p0[0], p0[1], 'g*', label = "Interpolation points")
-        plt.plot(p1[0], p1[1], 'g*')
+        plt.plot(maxp[0], maxp[1], 'bo', label = "Rates with optimal threshold")
+        plt.plot(p0[0], p0[1], 'go', label = "Interpolation points")
+        plt.plot(p1[0], p1[1], 'go')
         #plt.plot([p1[0],p0[0]], [p1[1],p0[1]], 'go')
         plt.plot([p0[0],p1[0]], [p0[1], p1[1]], 'r')
         plt.legend()
@@ -122,7 +122,7 @@ def equal_odds(T, CLVar, group, p0, plot = False):
      
     tA = t_afri
     tC = [t_cau1, t_cau2]
-    return FPR_TPR_odd, ACC, conf, tA, tC
+    return FPR_TPR_odd, ACC, conf, tA, tC, percent
 
 
 

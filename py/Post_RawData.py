@@ -11,26 +11,37 @@ from Process_data import A, ytrue, yhat
 from Equal_opportunity import *
        
 DATA = equal(A, yhat, ytrue, N=600)
-#allthresholds, allfpr, alltpr, allauc, thresholds = DATA.ROC(False, True)
-#Compute fpr anf tpr on lowest ROC with threshold t: 
-
-
 #Compute confusion matrix values with the two thresholds: t1, t2, with probability p1 for group g
-t1, t2, g, p1 = 2, 7, 1, 0.9
-conf = DATA.calc_ConfusionMatrix(t1, t2, g, p1)
+#t1, t2, g, p1 = 2, 7, 1, 0.9
+#conf = DATA.calc_ConfusionMatrix(t1, t2, g, p1)
 
-t = 5
 ##Kode fra https://www.daniweb.com/programming/computer-science/tutorials/520084/understanding-roc-curves-from-scratch
 T = [0,1,2,3,4,5,6,7,8,9,10]
-TP1, FP1 = DATA.ROC_(T, models = False)
+FPR, TPR = DATA.ROC_(T, models = False)
+accs = DATA.acc_(np.arange(0,11), models = False)
 
-Ax = TP1['African-American']
-Ay = FP1['African-American']
+Atpr = TPR['African-American']
+Afpr = FPR['African-American']
 
-Cx = TP1['Caucasian']
-Cy = FP1['Caucasian']
+Ctpr = TPR['Caucasian']
+Cfpr = FPR['Caucasian']
+
+plt.plot(Cfpr,Ctpr,'g', label = 'Caucasian')
+plt.plot(Afpr,Atpr,'b', label = 'African-american')
+plt.plot(Cfpr[5], Ctpr[5],'go', label = "Caucasian rates t = 5")
+plt.plot(Afpr[5], Atpr[5],'bo', label = "African-American rates, t = 5")
+plt.legend()
+plt.title("ROC curve on decile_score.1 and two_years_recid")
+plt.show() 
 
 accs = DATA.acc_(np.arange(0,11), models = False)
+
+print(accs['African-American'][5])
+print(accs['Caucasian'][5])
+print(Cfpr[5])
+print(Ctpr[5])
+print(Afpr[5])
+print(Atpr[5])
 
 max_accs = [np.argmax(accs['African-American']), np.argmax(accs['Caucasian'])]
 
@@ -87,4 +98,4 @@ DATA.FP_TP_rate(c2)
 plt.show()
 
 #equalised odds
-max_acc_raw, maxt_raw, rate_raw ,conf_before_raw, conf_after_raw, acc_before_raw, acc_after_raw, rate_before_raw = equal_opportunity(0.1, T, DATA, plot = True)
+#max_acc_raw, maxt_raw, rate_raw ,conf_before_raw, conf_after_raw, acc_before_raw, acc_after_raw, rate_before_raw = equal_opportunity(0.1, T, DATA, plot = True)

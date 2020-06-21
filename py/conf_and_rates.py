@@ -23,7 +23,7 @@ def plot_conf(conf_mtrx, title):
     df = pd.DataFrame(conf, index = ["Predictive (1)", "Predictive (0)"], columns = ["Actual (1)","Actual (0)"])
 
     ax = plt.axes()
-    sns.heatmap(df/np.sum(df), annot=True, fmt='.2%', cmap='Blues', ax = ax)
+    sns.heatmap(df, annot=True, fmt='.4', cmap='Blues',annot_kws={"size": 11}, ax = ax)
     
     ax.set_title(title)
 
@@ -42,12 +42,11 @@ def rates(conf_mtrx):
     fn = conf_mtrx[3]
     
     PPV = tp/(tp+fp) 
-    TDR = tp/(tp+fn)
-    FOR = fn/(tn+fn)
+
+    FOR = fn/(tn+fn) #
     FNR = fn/(tp+fn) 
-    FDR = fp/(tp+fp) 
-    FPR = fp/(fp+tn)
-    NPV = tn/(tn+fn)
+    FDR = fp/(tp+fp) #
+    NPV = tn/(tn+fn) #
     TNR = tn/(tn+fp)
-    return [PPV, TDR, FOR, FNR, FDR, FPR, NPV, TNR]
+    return [PPV, FOR, FNR, FDR ,NPV, TNR]
 
