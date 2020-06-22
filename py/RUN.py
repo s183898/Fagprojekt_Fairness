@@ -39,7 +39,7 @@ T = np.arange(0,1.001,0.001)
 sigma = 0.001
 
 
-"""
+
 #%% Random forrest
 #model_rf = load_classifier_1("RF", X_train, y_train)
 train_acc, test_acc, yhat_rf, model_rf = train_test_RF(X_train, y_train, X_test, y_test)
@@ -121,7 +121,7 @@ Rates_nn_odds_C = rates(conf_odds_nn[1])
 Rates_nn_opp_C = rates(conf_opp_nn[1])
 
 out(Rates_nn_opp_A )
-"""
+
 #%%
 #Raw data
 from Process_data import A, ytrue, yhat
@@ -161,7 +161,7 @@ print(rates(conf_C))
 plot_conf(conf_A, 'African-American')
 plot_conf(conf_C, 'Caucasian')
 #%% Print results
-"""
+
 title = ["RF classifier (African-American)", "RF classifier (Caucasian)", "RF classifier (African-American)", "RF classifier (Caucasian)", "RF classifier (African-American)","RF classifier (Caucasian)",
          "NN, classifier (African-American)", "NN classifier (Caucasian)", "NN, classifier (African-American)", "NN classifier (Caucasian)", "NN, classifier (African-American)","NN classifier (Caucasian)"]
 
@@ -336,4 +336,3 @@ plt.show()
 plot_conf(conf_opp_nn[1], title[11])
 plt.show()
 
-"""

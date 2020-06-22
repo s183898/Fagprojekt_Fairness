@@ -82,6 +82,8 @@ class dataprocess:
 ##define class variabel
 twoyears = dataprocess("./data/compas-scores-two-years.csv")
 
+Correlations = twoyears.data.corr()
+
 ## Compute legth of stay of compas-score prison time
 length  = twoyears.days_len("c_jail_in","c_jail_out","c_len_of_stay")
 
@@ -102,8 +104,7 @@ twoyears.hotK(klist, remove)
 #remove nans
 twoyears.data = twoyears.data.dropna(axis = 0)
 
-
-
+Correlations = twoyears.data.corr()
 #%% Prepair data
 #Prepair data for POST step on compas data 
 A = twoyears.data["race"]
@@ -135,4 +136,5 @@ y_train, y_test = y[train_index], y[test_index]
 
 labels = twoyears.data.drop(["decile_score.1"],axis =1)
 labels = labels.columns.values
+
 
