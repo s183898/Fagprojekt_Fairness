@@ -104,7 +104,7 @@ twoyears.hotK(klist, remove)
 #remove nans
 twoyears.data = twoyears.data.dropna(axis = 0)
 
-Correlations = twoyears.data.corr()
+Correlations1 = twoyears.data.corr()
 #%% Prepair data
 #Prepair data for POST step on compas data 
 A = twoyears.data["race"]
