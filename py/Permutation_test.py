@@ -153,8 +153,8 @@ def direction(n_perm, name, full = False, plots = False):
     return mean_decile
 
 
-p_values = permutation_test(1000,"RF")
+p_values = permutation_test(100,"RF")
 
-np.save("npy_files/p_value_RF_CV_29",p_values)
+np.save("npy_files/p_value_RF_CV_100",p_values)
 
-print(np.load("npy_files/p_value_RF_CV_29.npy"))
+print(np.load("npy_files/p_value_RF_CV_100.npy"))
