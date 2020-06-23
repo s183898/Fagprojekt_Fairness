@@ -50,3 +50,13 @@ def rates(conf_mtrx):
     TNR = tn/(tn+fp)
     return [PPV, FOR, FNR, FDR ,NPV, TNR]
 
+def baserate(conf_mtrx): 
+    tp = conf_mtrx[0]
+    fp = conf_mtrx[1]
+    tn = conf_mtrx[2]
+    fn = conf_mtrx[3]
+    
+    SBR = 1
+    FBR = 1
+    
+    return [SBR, FBR]

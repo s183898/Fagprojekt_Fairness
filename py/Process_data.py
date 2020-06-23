@@ -4,7 +4,9 @@ Created on Wed Apr 15 17:47:11 2020
 
 @author: mat05
 """
+
 import numpy as np
+import sys
 import pandas as pd 
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
@@ -12,6 +14,7 @@ from datetime import datetime
 date_format = "%Y-%m-%d"
 #from POST import *
 from sklearn.model_selection import ShuffleSplit
+np.set_printoptions(threshold=sys.maxsize)
 
 np.random.seed(217)
 
@@ -82,8 +85,6 @@ class dataprocess:
 ##define class variabel
 twoyears = dataprocess("./data/compas-scores-two-years.csv")
 
-Correlations = twoyears.data.corr()
-
 ## Compute legth of stay of compas-score prison time
 length  = twoyears.days_len("c_jail_in","c_jail_out","c_len_of_stay")
 
@@ -94,6 +95,7 @@ keeplist = ['sex', 'age', 'age_cat', 'race', 'juv_fel_count',
        'decile_score.1','two_year_recid', 'c_len_of_stay']
 
 twoyears.data = twoyears.data[keeplist]
+Correlations = twoyears.data.corr()
 
 ## One hot K. One hot k encoded features are removed except "race". 
 klist = ['sex', 'age_cat', 'race', 'c_charge_degree', 'r_charge_degree'] #'vr_charge_degree'

@@ -38,8 +38,6 @@ yhat = pd.DataFrame(yhat)
 T = np.arange(0,1.001,0.001)
 sigma = 0.001
 
-
-
 #%% Random forrest
 #model_rf = load_classifier_1("RF", X_train, y_train)
 train_acc, test_acc, yhat_rf, model_rf = train_test_RF(X_train, y_train, X_test, y_test)
@@ -76,6 +74,8 @@ Rates_rf_opp_A = rates(conf_after[0])
 Rates_rf_before_C = rates(conf_before[1])
 Rates_rf_odds_C = rates(conf_odds[1])
 Rates_rf_opp_C = rates(conf_after[1])
+
+Baserate = 
 
 def out(rate):     
     print("& %.3f & %.3f & %.3f & %.3f & %.3f & %.3f " %(rate[0], rate[1], rate[2], rate[3], rate[4], rate[5]))
