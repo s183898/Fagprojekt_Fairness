@@ -4,7 +4,9 @@ Created on Wed Apr 15 17:47:11 2020
 
 @author: mat05
 """
+
 import numpy as np
+import sys
 import pandas as pd 
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
@@ -12,6 +14,7 @@ from datetime import datetime
 date_format = "%Y-%m-%d"
 #from POST import *
 from sklearn.model_selection import ShuffleSplit
+np.set_printoptions(threshold=sys.maxsize)
 
 np.random.seed(217)
 
@@ -92,6 +95,7 @@ keeplist = ['sex', 'age', 'age_cat', 'race', 'juv_fel_count',
        'decile_score.1','two_year_recid', 'c_len_of_stay']
 
 twoyears.data = twoyears.data[keeplist]
+Correlations = twoyears.data.corr()
 
 ## One hot K. One hot k encoded features are removed except "race". 
 klist = ['sex', 'age_cat', 'race', 'c_charge_degree', 'r_charge_degree'] #'vr_charge_degree'
@@ -102,8 +106,7 @@ twoyears.hotK(klist, remove)
 #remove nans
 twoyears.data = twoyears.data.dropna(axis = 0)
 
-
-
+Correlations1 = twoyears.data.corr()
 #%% Prepair data
 #Prepair data for POST step on compas data 
 A = twoyears.data["race"]
@@ -135,4 +138,5 @@ y_train, y_test = y[train_index], y[test_index]
 
 labels = twoyears.data.drop(["decile_score.1"],axis =1)
 labels = labels.columns.values
+
 
