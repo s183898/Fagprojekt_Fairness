@@ -10,20 +10,51 @@ import random
 from POST import *
 from Process_data import A, ytrue, yhat
 
-# A = A.values[test_index]
-# A = pd.DataFrame(A)
-# ytrue = ytrue.values[test_index]
-# ytrue = pd.DataFrame(ytrue)
 
-# A = A.values
-# A = pd.DataFrame(A)
-# ytrue = ytrue.values
-# ytrue = pd.DataFrame(ytrue)
+A = A.values
+A = pd.DataFrame(A)
+ytrue = ytrue.values
+ytrue = pd.DataFrame(ytrue)
+yhat = yhat.values
+yhat = pd.DataFrame(yhat)
 
 
-# equal_NN = equal(A[0],yhat,ytrue[0], N = 400)
-# conf = equal_NN.conf_models(5, 1)
-# print(equal_NN.FP_TP_rate(conf))
+p_NN = np.load("npy_files\p_value_NN_BO.npy")
+
+def permutation_decile(n_perm):
+
+    equal_true = equal(A[0], yhat[0], ytrue[0], N=400)
+    conf_0_true = equal_true.conf_(5,0)
+    conf_1_true = equal_true.conf_(5,1)
+    FP_0_true, TP_0_true = equal_true.FP_TP_rate(conf_0_true)
+    FP_1_true, TP_1_true = equal_true.FP_TP_rate(conf_1_true)
+
+    print(FP_0_true, TP_0_true)
+    print(FP_1_true, TP_1_true)
+    TP_list_0 = []
+    TP_list_1 = []
+    FP_list_0 = []
+    FP_list_1 = []
+    for i in range(n_perm):
+        yperm = np.array(resample(yhat[0]))
+        equal_perm = equal(A[0], yperm, ytrue[0], N=400)
+        conf_0 = equal_perm.conf_(5,0)
+        conf_1 = equal_perm.conf_(5,1)
+        FP_0, TP_0 = equal_perm.FP_TP_rate(conf_0)
+        FP_1, TP_1 = equal_perm.FP_TP_rate(conf_1)
+
+        FP_list_0.append(FP_0)
+        FP_list_1.append(FP_1)
+        TP_list_0.append(TP_0)
+        TP_list_1.append(TP_1)
+
+    p_FP_0 = stats.ttest_1samp(FP_list_0,)
+    p_FP_1 = stats.ttest_1samp(FP_list_0,)
+    p_FP_1 = stats.ttest_1samp(FP_list_0,)
+    p_FP_1 = stats.ttest_1samp(FP_list_0,)
+
+    return 
+
 
 
 #np.random.seed(217)
@@ -116,7 +147,7 @@ def direction(n_perm, name, full = False, plots = False):
     # Index of first binary feature
     binary = 6
     n_attr = (X_test.shape[1]-binary)
-    decile = np.zeros([n_perm,n_attr])
+    prob = np.zeros([n_perm,n_attr])
 
     for idx in range(n_attr):
         i = idx + binary
@@ -135,26 +166,45 @@ def direction(n_perm, name, full = False, plots = False):
             if name == "RF":
                 pred_perm = model.predict_proba(X_perm)[:,1]
             # Save mean of predictions
-            mean_score = sum(pred_perm[bin_1])/sum(bin_1)
-            decile[trial,idx] = mean_score
-            mean_decile = np.mean(decile,axis = 0)
-            mean_decile = abs(mean_decile-1)*10
+
+
+            mean_score = np.mean(pred_perm[bin_1])
+            prob[trial,idx] = mean_score
+            mean_prob = np.mean(prob,axis = 0)
+            mean_decile = abs(mean_prob-1)*10
 
 
     if plots == True:
-    
+        if name == "NN":
+            ori_prob = np.mean(model.predict(X_test))
+            ori_decile = abs(ori_prob-1)*10
+        if name == "RF":
+            ori_prob = np.mean(model.predict_proba(X_test)[:,1])
+            ori_decile = abs(ori_prob-1)*10
+
+        fig = plt.figure()
+        errs = np.std(prob, axis = 0)*10
+
         y_pos = np.arange(n_attr)
-        plt.barh(y_pos,mean_decile)
+        colors = []
+        for i in mean_decile:
+            if i > ori_decile:
+                colors.append("r")
+            elif i < ori_decile:
+                colors.append("g")
+            else:
+                colors.append("b")
+
+        plt.barh(y_pos,mean_decile, xerr =[errs,errs], color = colors)
+        plt.axvline(ori_decile, linestyle = ":", color = "r")
         plt.title(name + " - " + "mean decile score after permutations")
         plt.yticks(y_pos,labels[binary:])
         plt.xlabel("Decile score")
+        plt.tight_layout()
         plt.show()
+        #fig.savefig('direction_NN_1000_full.png')
 
     return mean_decile
 
+direction(1000, "NN",full = False,plots = True)
 
-p_values = permutation_test(100,"RF")
-
-np.save("npy_files/p_value_RF_CV_100",p_values)
-
-print(np.load("npy_files/p_value_RF_CV_100.npy"))
