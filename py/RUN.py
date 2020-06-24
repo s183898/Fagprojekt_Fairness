@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from Equal_opportunity import equal_opportunity 
-from conf_and_rates import plot_conf, rates
+from conf_and_rates import plot_conf, rates, baserate
 import numpy as np
 from randomforrest import train_test_RF
 from tensorflow.keras.models import load_model
@@ -51,10 +51,10 @@ Equal_rf = equal(A[0], yhat_rf[0], ytrue[0], N=400)
 #Equalised odds
 group = 'African-American'
 p0 = [1,1]
-FPR_TPR_odds, ACC, conf_odds, tA_odds, tC_odds, percent_RF= equal_odds(T, Equal_rf, group, p0, plot = True)
+FPR_TPR_odds, ACC, conf_odds, tA_odds, tC_odds, percent_RF= equal_odds(T, Equal_rf, group, p0, plot = False)
 
 #Equal opportunity
-max_acc, t_odds, FPR_TPR_opp,conf_before, conf_after, acc_before, acc_after, rate_before= equal_opportunity(sigma, T, Equal_rf, plot = True)
+max_acc, t_odds, FPR_TPR_opp,conf_before, conf_after, acc_before, acc_after, rate_before= equal_opportunity(sigma, T, Equal_rf, plot = False)
  
 
 #Define number of observations in each class
@@ -68,6 +68,7 @@ w_acc_before = (acc_before[0]*n_A + acc_before[1]*n_C)/(n_A+n_C)
 
 ##Rates 
 #PPV, TDR, FOR, FNR, FDR, FPR, NPV, TNR
+confs = [conf_before[0], conf_odds[0], conf_after[0], conf_before[1], conf_odds[1], conf_after[1]]
 Rates_rf_before_A = rates(conf_before[0])
 Rates_rf_odds_A = rates(conf_odds[0])
 Rates_rf_opp_A = rates(conf_after[0])
@@ -75,7 +76,11 @@ Rates_rf_before_C = rates(conf_before[1])
 Rates_rf_odds_C = rates(conf_odds[1])
 Rates_rf_opp_C = rates(conf_after[1])
 
-Baserate = 
+NBR_RF,PBR_RF = [], []
+for i in confs:
+    print(i)
+    NBR_RF.append(baserate(i)[0]), PBR_RF.append(baserate(i)[1])
+
 
 def out(rate):     
     print("& %.3f & %.3f & %.3f & %.3f & %.3f & %.3f " %(rate[0], rate[1], rate[2], rate[3], rate[4], rate[5]))
@@ -103,10 +108,10 @@ n_C = equal_NN.Freq[1]
 #Equalised odds
 group = 'African-American'
 p0 = [1,1]
-FPR_TPR_odds_nn, accNN, conf_odds_nn, tAodds_nn, tCodds_nn, percent_NN = equal_odds(T, equal_NN, group, p0, plot = True)
+FPR_TPR_odds_nn, accNN, conf_odds_nn, tAodds_nn, tCodds_nn, percent_NN = equal_odds(T, equal_NN, group, p0, plot = False)
 
 #Equal opportunity
-max_acc_nn, t_odds_nn, FPR_TPR_opp_nn,conf_before_nn, conf_opp_nn, acc_before_nn, acc_opp_nn, rate_before_nn = equal_opportunity(sigma, T, equal_NN, plot = True)
+max_acc_nn, t_odds_nn, FPR_TPR_opp_nn,conf_before_nn, conf_opp_nn, acc_before_nn, acc_opp_nn, rate_before_nn = equal_opportunity(sigma, T, equal_NN, plot = False)
 
 #weighted relative acc
 w_acc_odd_nn = (accNN[0]*n_A + accNN[1]*n_C)/(n_A+n_C)
@@ -119,6 +124,11 @@ Rates_nn_opp_A = rates(conf_opp_nn[0])
 Rates_nn_before_C = rates(conf_before_nn[1])
 Rates_nn_odds_C = rates(conf_odds_nn[1])
 Rates_nn_opp_C = rates(conf_opp_nn[1])
+
+confs1 = [conf_before_nn[0],conf_odds_nn[0],conf_opp_nn[0],conf_before_nn[1],conf_odds_nn[1],conf_opp_nn[1] ]
+NBR_NN,PBR_NN = [], []
+for i in confs1:
+    NBR_NN.append(baserate(i)[0]), PBR_NN.append(baserate(i)[1])
 
 out(Rates_nn_opp_A )
 
@@ -160,6 +170,9 @@ print(rates(conf_C))
 
 plot_conf(conf_A, 'African-American')
 plot_conf(conf_C, 'Caucasian')
+
+baseA = baserate(conf_A)
+baseC = baserate(conf_C)
 #%% Print results
 
 title = ["RF classifier (African-American)", "RF classifier (Caucasian)", "RF classifier (African-American)", "RF classifier (Caucasian)", "RF classifier (African-American)","RF classifier (Caucasian)",

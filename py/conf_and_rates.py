@@ -8,6 +8,7 @@ import numpy as np
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
 
 def plot_conf(conf_mtrx, title):
     """
@@ -19,11 +20,10 @@ def plot_conf(conf_mtrx, title):
     conf[0,1] = conf_mtrx[1]
     conf[1,0] = conf_mtrx[3]
     conf[1,1] = conf_mtrx[2]
-    
+    conf = conf/conf.sum()
     df = pd.DataFrame(conf, index = ["Predictive (1)", "Predictive (0)"], columns = ["Actual (1)","Actual (0)"])
-
     ax = plt.axes()
-    sns.heatmap(df, annot=True, fmt='.4', cmap='Blues',annot_kws={"size": 11}, ax = ax)
+    sns.heatmap(df, annot=True, fmt='.2%', cmap='Blues',annot_kws={"size": 11}, ax = ax)
     
     ax.set_title(title)
 
@@ -56,7 +56,7 @@ def baserate(conf_mtrx):
     tn = conf_mtrx[2]
     fn = conf_mtrx[3]
     
-    SBR = 1
-    FBR = 1
+    NBR = (fp + tn)/(tp + fp + tn +fn)
+    PBR = (tp + fn)/(tp + fp + tn +fn)
     
-    return [SBR, FBR]
+    return NBR, PBR
